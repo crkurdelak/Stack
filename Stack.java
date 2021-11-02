@@ -1,4 +1,5 @@
 import java.util.ConcurrentModificationException;
+import java.util.EmptyStackException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -10,21 +11,10 @@ import java.util.NoSuchElementException;
  * @author ckurdelak20@georgefox.edu
  */
 public class Stack<E> implements Iterable<E> {
-    // TODO implement Stack
-    // TODO LIFO
-    // TODO remove all index stuff
     // TODO throw EmptyStackException
-
-    // add -> push
-    // remove -> pop
-    // peek -> get
-
-    // only modification at top
-    // no indexing
 
     private StackNode<E> _top;
     private int _depth;
-    private long _modCount;
 
     /**
      * Creates a new Stack.
@@ -32,7 +22,6 @@ public class Stack<E> implements Iterable<E> {
     public Stack() {
         _top = null;
         _depth = 0;
-        _modCount = 0;
     }
 
 
@@ -43,23 +32,64 @@ public class Stack<E> implements Iterable<E> {
      * @return true if this collection has changed as a result of the call
      */
     public boolean push(E element) {
-        // TODO change to push @ top
-        LinkedListNode<E> newNode;
-        if (this.size() == 0) {
-            newNode = new LinkedListNode<>(element);
-            _head = newNode;
-            _tail = newNode;
+        StackNode<E> newNode;
+
+        newNode = new StackNode<>(element);
+        if (this.depth() > 0) {
+            newNode.setNext(_top);
         }
-        else {
-            newNode = new LinkedListNode<>(element);
-            newNode.setPrevious(_tail);
-            _tail.setNext(newNode);
-            _tail = newNode;
-        }
-        _size++;
-        _modCount++;
+        _top = newNode;
+
+        _depth++;
 
         return true;
+    }
+
+
+    /**
+     * Pushes all given elements to this Stack
+     *
+     * @param elements an iterable collection of elements to push to this Stack
+     */
+    public void pushAll(Iterable<E> elements) {
+        for (E element : elements) {
+            this.push(element);
+        }
+    }
+
+
+    /**
+     * Returns the top of this Stack without removing it.
+     *
+     * @return the top of this Stack
+     * @throws EmptyStackException if this Stack is empty
+     */
+    public E peek() {
+        if (!isEmpty()) {
+            return _top.getValue();
+        }
+        else {
+            throw new EmptyStackException();
+        }
+    }
+
+
+    /**
+     * Removes and returns the top of this Stack.
+     *
+     * @return the element that was removed from the Stack
+     * @throws EmptyStackException if the Stack is empty
+     */
+    public E pop() {
+        if (!isEmpty()) {
+            StackNode<E> oldTop = _top;
+            _top = oldTop.getNext();
+
+            return oldTop.getValue();
+        }
+        else {
+            throw new EmptyStackException();
+        }
     }
 
 
@@ -67,12 +97,7 @@ public class Stack<E> implements Iterable<E> {
      * Removes all the elements from this list. The list will be empty after this call returns.
      */
     public void clear() {
-        // TODO implement for Stack
-        // let go of top
-        if (_top != null) {
-            _top = null;
-            _modCount++;
-        }
+        _top = null;
     }
 
 
@@ -88,69 +113,6 @@ public class Stack<E> implements Iterable<E> {
 
 
     /**
-     * Removes and returns the element from the specified position in this list.
-     *
-     * Maintains constant-time access to head and tail
-     *
-     * @param index the index of the element to be removed
-     * @return the element that was removed from the list
-     * @throws IndexOutOfBoundsException if the specified index is out of range
-     */
-    public E remove(int index) {
-        // TODO change to pop
-        if (this.isValidIndex(index) && !isEmpty()) {
-            LinkedListNode<E> oldNode;
-            LinkedListNode<E> prevNode;
-            LinkedListNode<E> nextNode;
-            E oldValue;
-
-            if (index == 0) {
-                oldNode = _head;
-                oldValue = oldNode.getValue();
-                if (this.size() > 1) {
-                    nextNode = oldNode.getNext();
-
-                    nextNode.setPrevious(null);
-                    _head = nextNode;
-                }
-                else {
-                    _head = null;
-                }
-            }
-            else if (index == size() - 1) {
-                oldNode = _tail;
-                oldValue = oldNode.getValue();
-                prevNode = oldNode.getPrevious();
-
-                prevNode.setNext(null);
-                _tail = prevNode;
-            }
-            else {
-                oldNode = this.seek(index);
-                oldValue = oldNode.getValue();
-                prevNode = oldNode.getPrevious();
-                nextNode = oldNode.getNext();
-
-                prevNode.setNext(nextNode);
-                nextNode.setPrevious(prevNode);
-            }
-
-            oldNode.setPrevious(null);
-            oldNode.setNext(null);
-            oldNode.setValue(null);
-
-            _size--;
-            _modCount++;
-
-            return oldValue;
-        }
-        else {
-            throw new IndexOutOfBoundsException();
-        }
-    }
-
-
-    /**
      * Returns the number of elements in this stack.
      *
      * @return the number of elements in this stack
@@ -161,23 +123,17 @@ public class Stack<E> implements Iterable<E> {
 
 
     /**
-     * Returns a new LinkedListIterator object that iterates from head to tail.
+     * Returns a new StackIterator object.
      *
-     * @return a new LinkedListIterator object that iterates from head to tail
+     * @return a new StackIterator object
      */
     public Iterator<E> iterator() {
         return new StackIterator();
     }
 
 
-    // TODO implement pushAll
-    // takes an iterable thing
-    // for each element in collectn of elements, push element
-
-
     /**
-     * A node that stores a single element in a LinkedList as well as references to its adjacent
-     * nodes.
+     * A node that stores a single element in a Stack as well as a reference to the next node.
      *
      * @param <E> the type of element stored in this node
      */
@@ -205,22 +161,21 @@ public class Stack<E> implements Iterable<E> {
 
 
         /**
-         * Constructs a new LinkedListNode with the given value.
+         * Constructs a new StackNode with the given value.
          *
-         * @param value the value stored in this LinkedListNode
-         * @param prev the previous LinkedListNode
-         * @param next the next LinkedListNode
+         * @param value the value stored in this StackNode
+         * @param next the next StackNode
          */
-        public StackNode(E value, StackNode<E> prev, StackNode<E> next) {
+        public StackNode(E value, StackNode<E> next) {
             _value = value;
             _next = next;
         }
 
 
         /**
-         * Returns the value of this LinkedListNode.
+         * Returns the value of this StackNode.
          *
-         * @return the value of this LinkedListNode
+         * @return the value of this StackNode
          */
         public E getValue() {
             return _value;
@@ -228,9 +183,9 @@ public class Stack<E> implements Iterable<E> {
 
 
         /**
-         * Returns the next LinkedListNode.
+         * Returns the next StackNode.
          *
-         * @return the next LinkedListNode
+         * @return the next StackNode
          */
         public StackNode<E> getNext() {
             return _next;
@@ -248,7 +203,7 @@ public class Stack<E> implements Iterable<E> {
 
 
         /**
-         * Sets the next attribute to a new node.
+         * Sets this node's next attribute to a new node.
          *
          * @param next the new next node
          */
@@ -259,42 +214,23 @@ public class Stack<E> implements Iterable<E> {
 
 
     /**
-     * Implements the Iterator<T> interface for the LinkedList class.
-     *
-     * Uses fail-fast iteration.
+     * Implements the Iterator<T> interface for the Stack class.
      */
     private class StackIterator implements Iterator<E> {
 
-        private StackNode<E> _currentNode;
-
         /**
-         * Constructs a new LinkedListIterator object.
+         * Constructs a new StackIterator object.
          */
         public StackIterator() {
-            // TODO implement StackIterator
-            // TODO pop every time it iterates -> consumes stack
-            _currentNode = _top;
-            _modCountCopy = _modCount;
         }
 
         /**
-         * Returns true if the current node has a next, else returns false.
+         * Returns true if the current top has a next, else returns false.
          *
-         * @return true if the current node has a next, else returns false
+         * @return true if the current top has a next, else returns false
          */
         public boolean hasNext() {
-            // TODO remove fail fast iteration bc stack needs to be consumed during iteration
-            if (_modCountCopy == _modCount) {
-                if (! _reverse) {
-                    return _currentIndex < _size;
-                }
-                else {
-                    return _currentIndex >= 0;
-                }
-            }
-            else {
-                throw new ConcurrentModificationException();
-            }
+            return (_top.getNext() != null);
         }
 
 
@@ -302,34 +238,10 @@ public class Stack<E> implements Iterable<E> {
          * Returns and pops the next element in this iteration.
          *
          * @return the next element in this iteration
-         * @throws ConcurrentModificationException if the list has been modified since iteration
-         * started
          * @throws NoSuchElementException if the iteration has no more elements
          */
         public E next() {
-            // TODO pop top every iteration
-            if (_modCountCopy == _modCount) {
-                if (hasNext()) {
-                    E item = get(_currentIndex);
-                    if (item == null) {
-                        throw new NoSuchElementException();
-                    }
-                    if (!_reverse) {
-                        _currentNode = _currentNode.getNext();
-                        _currentIndex++;
-                    } else {
-                        _currentNode = _currentNode.getPrevious();
-                        _currentIndex--;
-                    }
-                    return item;
-                }
-                else {
-                    throw new NoSuchElementException();
-                }
-            }
-            else {
-                throw new ConcurrentModificationException();
-            }
+            return pop();
         }
     }
 }

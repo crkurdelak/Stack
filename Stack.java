@@ -11,7 +11,6 @@ import java.util.NoSuchElementException;
  * @author ckurdelak20@georgefox.edu
  */
 public class Stack<E> implements Iterable<E> {
-    // TODO throw EmptyStackException
 
     private StackNode<E> _top;
     private int _depth;
@@ -139,8 +138,8 @@ public class Stack<E> implements Iterable<E> {
      */
     private class StackNode<E> {
 
-        E _value;
-        StackNode<E> _next;
+        private E _value;
+        private StackNode<E> _next;
 
         /**
          * Constructs a new StackNode.
@@ -222,15 +221,16 @@ public class Stack<E> implements Iterable<E> {
          * Constructs a new StackIterator object.
          */
         public StackIterator() {
+            // No internal state is needed because the top is always consumed during iteration.
         }
 
         /**
-         * Returns true if the current top has a next, else returns false.
+         * Returns true if there are more elements in this iteration, else returns false.
          *
-         * @return true if the current top has a next, else returns false
+         * @return true if there are more elements in this iteration, else return false
          */
         public boolean hasNext() {
-            return (_top.getNext() != null);
+            return (!isEmpty());
         }
 
 
@@ -241,7 +241,12 @@ public class Stack<E> implements Iterable<E> {
          * @throws NoSuchElementException if the iteration has no more elements
          */
         public E next() {
-            return pop();
+            if (hasNext()) {
+                return pop();
+            }
+            else {
+                throw new NoSuchElementException();
+            }
         }
     }
 }

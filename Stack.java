@@ -98,6 +98,7 @@ public class Stack<E> implements Iterable<E> {
      */
     public void clear() {
         _top = null;
+        _depth = 0;
     }
 
 

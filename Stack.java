@@ -83,6 +83,7 @@ public class Stack<E> implements Iterable<E> {
         if (!isEmpty()) {
             StackNode<E> oldTop = _top;
             _top = oldTop.getNext();
+            _depth --;
 
             return oldTop.getValue();
         }

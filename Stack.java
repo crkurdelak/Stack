@@ -6,7 +6,7 @@ import java.util.NoSuchElementException;
 /**
  * A stack of elements of type E.
  *
- * @param <E> the type of elements in this list
+ * @param <E> the type of elements in this Stack
  *
  * @author ckurdelak20@georgefox.edu
  */

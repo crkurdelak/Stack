@@ -6,7 +6,7 @@ import java.util.NoSuchElementException;
 /**
  * A stack of elements of type E.
  *
- * @param <E> the type of elements in this Stack
+ * @param <E> the type of elements in this stack
  *
  * @author ckurdelak20@georgefox.edu
  */
@@ -16,7 +16,7 @@ public class Stack<E> implements Iterable<E> {
     private int _depth;
 
     /**
-     * Creates a new Stack.
+     * Creates a new stack.
      */
     public Stack() {
         _top = null;
@@ -46,9 +46,9 @@ public class Stack<E> implements Iterable<E> {
 
 
     /**
-     * Pushes all given elements to this Stack
+     * Pushes all given elements to this stack
      *
-     * @param elements an iterable collection of elements to push to this Stack
+     * @param elements an iterable collection of elements to push to this stack
      */
     public void pushAll(Iterable<E> elements) {
         for (E element : elements) {
@@ -58,10 +58,10 @@ public class Stack<E> implements Iterable<E> {
 
 
     /**
-     * Returns the top of this Stack without removing it.
+     * Returns the top of this stack without removing it.
      *
-     * @return the top of this Stack
-     * @throws EmptyStackException if this Stack is empty
+     * @return the top of this stack
+     * @throws EmptyStackException if this stack is empty
      */
     public E peek() {
         if (!isEmpty()) {
@@ -74,10 +74,10 @@ public class Stack<E> implements Iterable<E> {
 
 
     /**
-     * Removes and returns the top of this Stack.
+     * Removes and returns the top of this stack.
      *
-     * @return the element that was removed from the Stack
-     * @throws EmptyStackException if the Stack is empty
+     * @return the element that was removed from the stack
+     * @throws EmptyStackException if the stack is empty
      */
     public E pop() {
         if (!isEmpty()) {
@@ -94,7 +94,7 @@ public class Stack<E> implements Iterable<E> {
 
 
     /**
-     * Removes all the elements from this list. The list will be empty after this call returns.
+     * Removes all the elements from this stack. The stack will be empty after this call returns.
      */
     public void clear() {
         _top = null;
@@ -103,10 +103,10 @@ public class Stack<E> implements Iterable<E> {
 
 
     /**
-     * Returns true if this list contains no elements.
+     * Returns true if this stack contains no elements.
      *
-     * @return true if this list contains no elements
-     * false if this list contains elements
+     * @return true if this stack contains no elements
+     * false if this stack contains elements
      */
     public boolean isEmpty() {
         return (_depth == 0);
@@ -134,7 +134,7 @@ public class Stack<E> implements Iterable<E> {
 
 
     /**
-     * A node that stores a single element in a Stack as well as a reference to the next node.
+     * A node that stores a single element in a stack as well as a reference to the next node.
      *
      * @param <E> the type of element stored in this node
      */
